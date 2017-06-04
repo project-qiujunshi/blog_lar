@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -33,11 +34,13 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function map()
+    public function map(Route $route)
     {
-        $this->mapApiRoutes();
+        $this->mapApiRoutes($route);
 
-        $this->mapWebRoutes();
+        //$this->mapWebRoutes();
+
+        $this->mapbackendRoutes($route);     // 后台路由注册
 
         //
     }
@@ -69,5 +72,19 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * 运营后台路由注册
+     * @param Route $route
+     */
+    public function mapbackendRoutes(Route $route){
+        $route::group([
+            'namespace' => $this->namespace . '\backend',
+            'middleware' => 'web',
+            'domain' => env('BACKEND_DOMAIN'),
+        ],function (){
+            require_once base_path('routes/backend.php');
+        });
     }
 }
