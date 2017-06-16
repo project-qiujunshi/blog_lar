@@ -80,7 +80,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function mapbackendRoutes(Route $route){
         $route::group([
-            'namespace' => $this->namespace . '\backend',
+            'namespace' => $this->namespace . '\Backend',
             'middleware' => 'web',
             'domain' => env('BACKEND_DOMAIN'),
         ],function (){
