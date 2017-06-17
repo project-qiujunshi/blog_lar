@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Backend;
 
 use App\Models\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use \Illuminate\Validation\Validator;
 
 
@@ -38,16 +40,26 @@ class AuthController extends BackendController
             'password' => '密码',
         ]);
 
-        $admin = Admin::where('username',$request->get('username'))->first();
-
-        echo $request->get('username'),$request->get('password');
-       
-        $result = \Auth::guard('admin')->attempt(['username'=>'admin','password'=>'123456']);
-
-        dd($result);
-        if (empty($admin)){
-            return back()->withErrors(['username'=>'用户名不存在'])->withInput();
+        $admin = \App\Admin::where('username',$request->get('username'))->first();
+        // 查找不到用户
+        if(empty($admin)){
+            return back()->withErrors(['username'=>'用户名不存在！'])->withInput();
         }
-        return back()->withErrors($validate)->withInput();
+
+        $result = \Auth::guard('admin')->attempt(['username'=>$request->get('username'),'password'=>$request->get('password')]);
+        if ($result){
+            // 登录成功
+            return redirect(route('web.setting'));
+        }else{
+            return back()->withErrors(['password'=>'密码错误！'])->withInput();
+        }
+    }
+
+    /**
+     * 退出登录
+     */
+    public function logout(){
+        Auth::guard('admin')->logout();
+        return redirect(route('auth.login.from'));
     }
 }

@@ -20,10 +20,16 @@ Route::get('/', function () {
 Route::group(['prefix'=>'auth'],function (){
     Route::get('login',['as'=>'auth.login.from','uses'=>'AuthController@loginFrom']);
     Route::post('login',['as'=>'auth.login','uses'=>'AuthController@login']);
+    Route::get('logout',['as'=>'auth.logout','uses'=>'AuthController@logout']);
 });
 
 
 #网站
-Route::group(['prefix'=>'web','namespace'=>'Web'],function (){
+Route::group(['prefix'=>'web','namespace'=>'Web','middleware'=>'admin'],function (){
     Route::get('setting',['as'=>'web.setting','uses'=>'SettingController@index']);
+});
+
+#主页
+Route::group([],function (){
+    Route::get('/',['uses'=>'IndexController@index']);
 });
